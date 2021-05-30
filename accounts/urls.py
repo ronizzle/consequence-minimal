@@ -5,4 +5,5 @@ urlpatterns = [
     path('', views.home),
     path('customer', views.customer),
     path('products', views.products),
+    path('customer/<str:pk>', views.customer),
 ]

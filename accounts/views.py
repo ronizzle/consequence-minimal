@@ -21,5 +21,6 @@ def products(request):
     return render(request, 'accounts/products.html', {'products': products})
 
 
-def customer(request):
-    return render(request, 'accounts/customer.html')
+def customer(request, pk):
+    customer = Customer.objects.get(id=pk)
+    return render(request, 'accounts/customer.html', {'customer': customer})

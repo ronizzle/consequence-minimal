@@ -9,7 +9,11 @@
 
         {% for i in customers %}
             <tr>
-                <td>{{i.name}}</td>
+                <td>
+                    <a href="/customer/{{i.id}}">
+                        {{i.name}}
+                    </a>
+                </td>
             </tr>
         {% endfor %}
     </thead>
