@@ -3,13 +3,20 @@ from django.contrib import messages
 from .forms import *
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 
 
 def index(request):
-    return render(request, 'consequence/index.html')
+    if request.user.is_authenticated:
+        return redirect('dashboard_index')
+
+    return redirect('login_page')
 
 
 def register(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard_index')
+
     form = CreateUserForm()
 
     if request.method == 'POST':
@@ -25,6 +32,8 @@ def register(request):
 
 
 def login_page(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard_index')
 
     context = {}
     if request.method == 'POST':
@@ -43,12 +52,14 @@ def login_page(request):
     return render(request, 'consequence/authentication/login.html', context)
 
 
+@login_required(login_url='login_page')
 def logout_user(request):
     context = {}
     logout(request)
     return redirect('login_page')
 
 
+@login_required(login_url='login_page')
 def dashboard_index(request):
     context = {}
     return render(request, 'consequence/dashboard/pages/index.html', context)
