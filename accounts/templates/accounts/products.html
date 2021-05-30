@@ -2,4 +2,19 @@
 
 {% block content %}
 <h2>Products</h2>
+<table class="table table-bordered">
+    <thead>
+        <th>Product</th>
+        <th>Category</th>
+        <th>Price</th>
+
+        {% for i in products %}
+            <tr>
+                <td>{{i.name}}</td>
+                <td>{{i.category}}</td>
+                <td>{{i.price}}</td>
+            </tr>
+        {% endfor %}
+    </thead>
+</table>
 {% endblock %}

@@ -1,5 +1,30 @@
 {% extends 'accounts/main.html' %}
 
 {% block content %}
-<h2>Dashboard</h2>
+<h2>Customers Total: {{total_customers}}</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <th>Name</th>
+
+        {% for i in customers %}
+            <tr>
+                <td>{{i.name}}</td>
+            </tr>
+        {% endfor %}
+    </thead>
+</table>
+<h2>Orders</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <th>Orders</th>
+
+        {% for i in orders %}
+            <tr>
+                <td>{{i.status}}</td>
+            </tr>
+        {% endfor %}
+    </thead>
+</table>
 {% endblock %}

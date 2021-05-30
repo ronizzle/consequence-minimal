@@ -44,6 +44,7 @@ class Order(models.Model):
         ('Out for Delivery', 'Out for Delivery'),
         ('Delivered', 'Delivered'),
     )
+    name = models.CharField(max_length=200, null=True)
     status = models.CharField(max_length=200, null=True, choices=STATUS)
     date_created = models.DateTimeField(auto_now_add=True)
     customer = models.ForeignKey(Customer, null=True, on_delete=models.SET_NULL)
