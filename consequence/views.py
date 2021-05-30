@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth.forms import UserCreationForm
+from .forms import *
 # Create your views here.
 
 
@@ -8,10 +8,10 @@ def index(request):
 
 
 def register(request):
-    form = UserCreationForm()
+    form = CreateUserForm()
 
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CreateUserForm(request.POST)
         if form.is_valid():
             form.save()
 

@@ -1,7 +1,9 @@
 <h1>Registration Page</h1>
 <form method="POST">
     {% csrf_token %}
-    {{form.as_p}}
+    {% for field in form %}
+    <p><strong>{{field.label}}</strong>{{field}}</p>
+    {% endfor %}
 
     <input type="submit" value="Create User" />
 </form>
