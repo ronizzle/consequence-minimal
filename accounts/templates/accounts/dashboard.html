@@ -8,12 +8,18 @@
 <table class="table table-bordered">
     <thead>
         <th>Name</th>
+        <th></th>
 
         {% for i in customers %}
             <tr>
                 <td>
                     <a href="{% url 'customer' i.id %}">
                         {{i.name}}
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'update_customer' i.id %}">
+                        Update
                     </a>
                 </td>
             </tr>

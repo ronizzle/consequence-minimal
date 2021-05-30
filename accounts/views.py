@@ -30,13 +30,27 @@ def customer(request, pk):
 def create_customer(request):
 
     if request.method == 'POST':
-        print('Printing Post', request.POST)
         form = CustomerForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('/')
 
     form = CustomerForm()
+
+    context = {'form': form}
+    return render(request, 'accounts/customer_form.html', context)
+
+
+def update_customer(request, pk):
+
+    customer = Customer.objects.get(id=pk)
+    if request.method == 'POST':
+        form = CustomerForm(request.POST, instance=customer)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+
+    form = CustomerForm(instance=customer)
 
     context = {'form': form}
     return render(request, 'accounts/customer_form.html', context)
