@@ -18,14 +18,15 @@ def register(request):
             form.save()
             username = form.cleaned_data.get('username')
             messages.success(request, 'Successfully registered for ' + username)
-            return redirect('login')
+            return redirect('login_page')
 
     context = {'form': form}
-    return render(request, 'consequence/register.html', context)
+    return render(request, 'consequence/authentication/register.html', context)
 
 
 def login_page(request):
 
+    context = {}
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -34,11 +35,20 @@ def login_page(request):
 
         if user is not None:
             login(request, user)
-            return redirect('dashboard')
+            return redirect('dashboard_index')
+        else:
+            messages.info(request, 'Invalid credentials.')
+            return render(request, 'consequence/authentication/login.html', context)
 
+    return render(request, 'consequence/authentication/login.html', context)
+
+
+def logout_user(request):
     context = {}
-    return render(request, 'consequence/login.html', context)
+    logout(request)
+    return redirect('login_page')
 
 
-def dashboard(request):
-    return HttpResponse('Dashboard says hello')
+def dashboard_index(request):
+    context = {}
+    return render(request, 'consequence/dashboard/pages/index.html', context)
