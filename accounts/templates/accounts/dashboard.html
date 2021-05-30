@@ -9,18 +9,18 @@
     <thead>
         <th>Name</th>
         <th></th>
+        <th></th>
 
         {% for i in customers %}
             <tr>
                 <td>
-                    <a href="{% url 'customer' i.id %}">
-                        {{i.name}}
-                    </a>
+                    <a href="{% url 'customer' i.id %}">{{i.name}}</a>
                 </td>
                 <td>
-                    <a href="{% url 'update_customer' i.id %}">
-                        Update
-                    </a>
+                    <a href="{% url 'update_customer' i.id %}">Update</a>
+                </td>
+                <td>
+                    <a href="{% url 'delete_customer' i.id %}">Delete</a>
                 </td>
             </tr>
         {% endfor %}

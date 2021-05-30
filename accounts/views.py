@@ -55,3 +55,14 @@ def update_customer(request, pk):
     context = {'form': form}
     return render(request, 'accounts/customer_form.html', context)
 
+
+def delete_customer(request, pk):
+
+    customer = Customer.objects.get(id=pk)
+    if request.method == 'POST':
+        customer.delete()
+        return redirect('/')
+
+    context = {'customer': customer}
+    return render(request, 'accounts/delete.html', context)
+
