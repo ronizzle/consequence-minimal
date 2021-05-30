@@ -1,1 +1,1 @@
-# consequence-minimal
+Consequence - Minimal App
