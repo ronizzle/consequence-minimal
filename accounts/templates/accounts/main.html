@@ -1,3 +1,4 @@
+{% load static %}
 <html>
 <head>
     <title>Accounts - Main</title>
@@ -10,15 +11,7 @@
             integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT"
             crossorigin="anonymous"></script>
 
-    <style>
-        .navbar-dark .navbar-nav .nav-link.active, .navbar-dark .navbar-nav .show>.nav-link {
-            color: red;
-        }
-
-        .navbar-dark .navbar-nav .nav-link {
-            color: red;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static '/css/main.css' %}">
 </head>
 <body></body>
 {% include 'accounts/navbar.html' %}
