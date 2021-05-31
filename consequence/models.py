@@ -42,3 +42,21 @@ class TrueLayerAccount(models.Model):
 
     def __str__(self):
         return self.display_name
+
+
+class TrueLayerCard(models.Model):
+
+    display_name = models.CharField(max_length=200, null=True)
+    tl_account_id = models.CharField(max_length=200, null=True)
+    card_type = models.CharField(max_length=200, null=True)
+    name_on_card = models.CharField(max_length=200, null=True)
+    card_network = models.CharField(max_length=200, null=True)
+    partial_card_number = models.CharField(max_length=200, null=True)
+    currency = models.CharField(max_length=200, null=True, choices=CURRENCY)
+    provider_display_name = models.CharField(max_length=200, null=True)
+    provider_id = models.CharField(max_length=200, null=True)
+    provider_logo_uri = models.CharField(max_length=200, null=True)
+    account = models.ForeignKey(Account, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.display_name
