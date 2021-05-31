@@ -22,7 +22,7 @@
         {% for account in accounts %}
         <tr>
             <td>
-                <a href="/home/accounts/{{account.account_id}}">
+                <a href="{%url 'truelayer_account_record' account.account_id %}">
                     {{account.account_number.number}}
                 </a>
             </td>
