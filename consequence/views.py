@@ -56,8 +56,12 @@ def login_page(request):
 
 @login_required(login_url='login_page')
 def logout_user(request):
-    del request.session['access_token']
-    del request.session['refresh_token']
+    if 'access_token' in request.session:
+        del request.session['access_token']
+
+    if 'refresh_token' in request.session:
+        del request.session['refresh_token']
+
     logout(request)
     return redirect('login_page')
 
@@ -108,6 +112,9 @@ def update_profile(request):
     return render(request, 'consequence/dashboard/pages/profile.html', context)
 
 
+
+
+
 @login_required(login_url='login_page')
 def truelayer_callback(request):
     token_auth_response = truelayer_connect_token(request.GET.get('code'))
@@ -123,6 +130,7 @@ def truelayer_callback(request):
     return redirect('/dashboard_index')
 
 
+
 @login_required(login_url='login_page')
 def accounts(request):
     if 'access_token' not in request.session:
@@ -133,5 +141,4 @@ def accounts(request):
     context = {'accounts': accounts['results']}
     print(accounts)
     return render(request, 'consequence/dashboard/pages/accounts.html', context)
-
 

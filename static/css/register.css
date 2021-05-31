@@ -59,3 +59,8 @@ html {
 .login-link {
     color: #AC0F2D !important;
 }
+.display-flash-message {
+    width: 100%;
+    background: #F1113B !important;
+    color: white !important;
+}

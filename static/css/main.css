@@ -5,3 +5,9 @@
 .navbar-dark .navbar-nav .nav-link {
     color: white;
 }
+
+.display-flash-message {
+    width: 100%;
+    background: #F1113B !important;
+    color: white !important;
+}
