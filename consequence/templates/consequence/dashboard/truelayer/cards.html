@@ -21,7 +21,7 @@
         {% for card in cards %}
         <tr>
             <td>
-                <a href="/home/accounts/{{card.account_id}}">
+                <a href="{%url 'truelayer_card_record' card.account_id %}">
                     {{card.display_name}}
                 </a>
             </td>

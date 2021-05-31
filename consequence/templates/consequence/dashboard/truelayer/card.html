@@ -1,0 +1,78 @@
+{% extends 'consequence/dashboard/base.html' %}
+
+{% block content %}
+<p class="h3 header">Card: {{card.display_name}}</p>
+
+{% for message in messages %}
+    <span class="display-flash-message">{{message}}</span>
+{% endfor %}
+<table class="table table-dark table-bordered table-hover table-striped">
+
+    <tr>
+        <td><strong>Card Type:</strong></td>
+        <td>
+            {{card.card_type}}
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Name on Card:</strong></td>
+        <td>
+            {{card.name_on_card}}
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Card Network:</strong></td>
+        <td>
+            {{card.card_network}}
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Partial Card Number:</strong></td>
+        <td>
+            {{card.partial_card_number}}
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Currency:</strong></td>
+        <td>
+            {{card.currency}}
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Provider:</strong></td>
+        <td>
+            <img height="100" width="100" src="{{card.provider.logo_uri}}">
+
+            {{card.provider.display_name}}
+        </td>
+    </tr>
+</table>
+
+
+<p class="h5 header">Card Transactions</p>
+
+<table class="table table-dark table-bordered table-hover table-striped">
+    <thead>
+        <th><strong>Amount</strong></th>
+        <th><strong>Currency</strong></th>
+        <th><strong>Description</strong></th>
+        <th><strong>Merchant</strong></th>
+        <th><strong>Timestamp</strong></th>
+        <th><strong>Running Balance</strong></th>
+        <th><strong>Transaction Category</strong></th>
+        <th><strong>Transaction Type</strong></th>
+    </thead>
+    {% for card_transaction in card_transactions %}
+        <tr>
+            <td>{{card_transaction.amount}}</td>
+            <td>{{card_transaction.currency}}</td>
+            <td>{{card_transaction.description}}</td>
+            <td>{{card_transaction.merchant_name}}</td>
+            <td>{{card_transaction.timestamp}}</td>
+            <td>{{card_transaction.running_balance.amount}}</td>
+            <td>{{card_transaction.transaction_category}}</td>
+            <td>{{card_transaction.transaction_type}}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

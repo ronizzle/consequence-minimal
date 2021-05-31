@@ -216,3 +216,14 @@ def truelayer_link_card(request, pk):
     messages.error(request, 'Card ' + tl_card.display_name + ' successfully linked!')
     return redirect('truelayer_cards_index')
 
+
+
+@login_required(login_url='login_page')
+def truelayer_card_record(request, pk):
+    url_suffix = 'data/v1/cards/' + pk
+    card = truelayer_rest_call(url_suffix, request.session['access_token'])['results'][0]
+
+    transactions_url_suffix = 'data/v1/cards/' + pk + '/transactions'
+    card_transactions = truelayer_rest_call(transactions_url_suffix, request.session['access_token'])['results']
+    context = {'card': card, 'card_transactions': card_transactions}
+    return render(request, 'consequence/dashboard/truelayer/card.html', context)
