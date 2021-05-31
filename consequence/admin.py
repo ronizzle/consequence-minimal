@@ -4,3 +4,4 @@ from .models import *
 
 admin.site.register(Account)
 admin.site.register(BusinessNature)
+admin.site.register(TrueLayerAccount)

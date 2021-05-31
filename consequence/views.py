@@ -146,8 +146,27 @@ def accounts(request):
 
 @login_required(login_url='login_page')
 def truelayer_link_account(request, pk):
+
+    tlAccounts = TrueLayerAccount.objects.filter(tl_account_id=pk)
+    if tlAccounts.count() > 0:
+        messages.error(request, 'Account ' + pk + ' already linked for another user!')
+        return redirect('/accounts')
+
     url_suffix = 'data/v1/accounts/' + pk
-    account = truelayer_rest_call(url_suffix, request.session['access_token'])
-    print(type(account))
-    return HttpResponse(account['results'])
+    account = truelayer_rest_call(url_suffix, request.session['access_token'])['results'][0]
+    tlAccount = TrueLayerAccount()
+    tlAccount.display_name = account['display_name']
+    tlAccount.tl_account_id = account['account_id']
+    tlAccount.account_type = account['account_type']
+    tlAccount.currency = account['currency']
+    tlAccount.account_number = account['account_number']['number']
+    tlAccount.account_number_swift_bic = account['account_number']['swift_bic']
+    tlAccount.account_number_sort_code = account['account_number']['sort_code']
+    tlAccount.provider_display_name = account['provider']['display_name']
+    tlAccount.provider_id = account['provider']['provider_id']
+    tlAccount.provider_logo_uri = account['provider']['logo_uri']
+    tlAccount.save()
+
+    messages.error(request, 'Account ' + pk + ' successfully linked!')
+    return redirect('/accounts')
 

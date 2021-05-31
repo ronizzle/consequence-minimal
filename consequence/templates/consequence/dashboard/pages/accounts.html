@@ -1,7 +1,11 @@
 {% extends 'consequence/dashboard/base.html' %}
 
 {% block content %}
-<h2>Accounts</h2>
+<h2 class="header">Accounts</h2>
+
+{% for message in messages %}
+    <span class="display-flash-message">{{message}}</span>
+{% endfor %}
 
 <table class="table table-bordered table-hover table-striped">
     <thead>
