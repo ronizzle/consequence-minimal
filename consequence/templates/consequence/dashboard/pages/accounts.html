@@ -12,7 +12,7 @@
         <th>Currency</th>
         <th>Display Name</th>
         <th>Provider</th>
-        <th>Date Modified</th>
+        <th></th>
     </thead>
     <tbody>
         {% for account in accounts %}
@@ -28,7 +28,9 @@
             <td>{{account.currency}}</td>
             <td>{{account.display_name}}</td>
             <td>{{account.provider.display_name}}</td>
-            <td>{{account.update_timestamp}}</td>
+            <td>
+                <a href="{%url 'truelayer_link_account' account.account_id %}">Link</a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>

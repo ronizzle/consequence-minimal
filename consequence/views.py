@@ -142,3 +142,12 @@ def accounts(request):
     print(accounts)
     return render(request, 'consequence/dashboard/pages/accounts.html', context)
 
+
+
+@login_required(login_url='login_page')
+def truelayer_link_account(request, pk):
+    url_suffix = 'data/v1/accounts/' + pk
+    account = truelayer_rest_call(url_suffix, request.session['access_token'])
+    print(type(account))
+    return HttpResponse(account['results'])
+

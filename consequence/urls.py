@@ -9,5 +9,8 @@ urlpatterns = [
     path('dashboard', views.dashboard_index, name='dashboard_index'),
     path('accounts', views.accounts, name='accounts_index'),
     path('profile', views.update_profile, name='update_profile'),
+
+    #TrueLayer URLS
     path('truelayer/callback', views.truelayer_callback, name='truelayer_callback'),
+    path('truelayer/account/link/<str:pk>', views.truelayer_link_account, name='truelayer_link_account'),
 ]
