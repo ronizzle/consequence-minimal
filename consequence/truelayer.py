@@ -4,7 +4,7 @@ from dotenv import dotenv_values
 config = dotenv_values()
 
 
-def link_builder():
+def truelayer_link_builder():
     base_url = config['TRUELAYER_AUTH_URL']
     code = config['TRUELAYER_CODE']
     scope = config['TRUELAYER_SCOPE']
@@ -14,4 +14,19 @@ def link_builder():
 
     url = base_url + '?response_type=' + code + '&client_id=' + client_id + '&scope=' + scope + '&redirect_uri=' + redirect_uri + '&providers=' + providers
     return url
+
+
+def truelayer_connect_token(code):
+    base_url = config['TRUELAYER_AUTH_URL']
+    url = base_url + 'connect/token'
+    client_id = config['TRUELAYER_CLIENT_ID']
+    client_secret = config['TRUELAYER_CLIENT_SECRET']
+    redirect_uri = config['TRUELAYER_REDIRECT_URI']
+    post_data = {
+        'grant_type': 'authorization_code',
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'redirect_uri': redirect_uri,
+        'code': code
+    }
 

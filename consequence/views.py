@@ -72,7 +72,7 @@ def dashboard_index(request):
     }
 
     if 'access_token' not in request.session:
-        context['link'] = link_builder()
+        context['link'] = truelayer_link_builder()
 
     return render(request, 'consequence/dashboard/pages/index.html', context)
 
@@ -106,3 +106,7 @@ def update_profile(request):
     }
     return render(request, 'consequence/dashboard/pages/profile.html', context)
 
+
+def truelayer_callback(request):
+    token_json = truelayer_connect_token(request.GET.get('code'))
+    return HttpResponse(request.GET.get('code'))
