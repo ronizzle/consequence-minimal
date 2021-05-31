@@ -159,6 +159,8 @@ def truelayer_cards_index(request):
 @login_required(login_url='login_page')
 def truelayer_link_account(request, pk):
 
+    user = User.objects.get(id=request.user.id)
+    account = Account.objects.filter(user__id=user.id).first()
     tl_accounts = TrueLayerAccount.objects.filter(tl_account_id=pk)
     if tl_accounts.count() > 0:
         messages.error(request, 'Error encountered: Account ' + tl_accounts.first().display_name + ' is already linked for another user!')
@@ -177,6 +179,7 @@ def truelayer_link_account(request, pk):
     tl_account.provider_display_name = account['provider']['display_name']
     tl_account.provider_id = account['provider']['provider_id']
     tl_account.provider_logo_uri = account['provider']['logo_uri']
+    tl_account = account
     tl_account.save()
 
     messages.error(request, 'Account ' + tl_account.display_name + ' successfully linked!')
@@ -187,6 +190,8 @@ def truelayer_link_account(request, pk):
 @login_required(login_url='login_page')
 def truelayer_link_card(request, pk):
 
+    user = User.objects.get(id=request.user.id)
+    account = Account.objects.filter(user__id=user.id).first()
     tl_cards = TrueLayerCard.objects.filter(tl_account_id=pk)
     if tl_cards.count() > 0:
         messages.error(request, 'Error encountered: Card ' + tl_cards.first().display_name + ' is already linked for another user!')
@@ -205,6 +210,7 @@ def truelayer_link_card(request, pk):
     tl_card.provider_display_name = card['provider']['display_name']
     tl_card.provider_id = card['provider']['provider_id']
     tl_card.provider_logo_uri = card['provider']['logo_uri']
+    tl_card.account = account
     tl_card.save()
 
     messages.error(request, 'Card ' + tl_card.display_name + ' successfully linked!')
