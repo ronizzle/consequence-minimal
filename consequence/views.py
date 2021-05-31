@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import *
+from .truelayer import *
+from .models import *
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -61,5 +63,14 @@ def logout_user(request):
 
 @login_required(login_url='login_page')
 def dashboard_index(request):
-    context = {}
+    user = User.objects.get(id=request.user.id)
+    context = {
+        'user': user,
+        'link': '',
+        'account': user.account
+    }
+
+    if 'access_token' not in request.session:
+        context.link = link_builder()
+
     return render(request, 'consequence/dashboard/pages/index.html', context)

@@ -1,7 +1,7 @@
 .navbar-dark .navbar-nav .nav-link.active, .navbar-dark .navbar-nav .show>.nav-link {
-    color: red;
+    color: white;
 }
 
 .navbar-dark .navbar-nav .nav-link {
-    color: red;
+    color: white;
 }
