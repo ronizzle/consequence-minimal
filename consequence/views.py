@@ -56,7 +56,8 @@ def login_page(request):
 
 @login_required(login_url='login_page')
 def logout_user(request):
-    context = {}
+    del request.session['access_token']
+    del request.session['refresh_token']
     logout(request)
     return redirect('login_page')
 
@@ -70,8 +71,6 @@ def dashboard_index(request):
         'link': '',
         'account': account
     }
-
-    print(request.session['access_token'])
 
     if 'access_token' not in request.session:
         context['link'] = truelayer_link_builder()
