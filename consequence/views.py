@@ -132,7 +132,7 @@ def truelayer_callback(request):
 
 
 @login_required(login_url='login_page')
-def accounts(request):
+def truelayer_accounts_index(request):
     if 'access_token' not in request.session:
         return redirect('/dashboard_index')
 
@@ -140,7 +140,19 @@ def accounts(request):
     accounts = truelayer_rest_call(url_suffix, request.session['access_token'])
     context = {'accounts': accounts['results']}
     print(accounts)
-    return render(request, 'consequence/dashboard/pages/accounts.html', context)
+    return render(request, 'consequence/dashboard/truelayer/accounts.html', context)
+
+
+@login_required(login_url='login_page')
+def truelayer_cards_index(request):
+    if 'access_token' not in request.session:
+        return redirect('/dashboard_index')
+
+    url_suffix = 'data/v1/cards'
+    cards = truelayer_rest_call(url_suffix, request.session['access_token'])
+    context = {'cards': cards['results']}
+    print(cards)
+    return render(request, 'consequence/dashboard/truelayer/cards.html', context)
 
 
 
@@ -149,7 +161,7 @@ def truelayer_link_account(request, pk):
 
     tlAccounts = TrueLayerAccount.objects.filter(tl_account_id=pk)
     if tlAccounts.count() > 0:
-        messages.error(request, 'Account ' + pk + ' already linked for another user!')
+        messages.error(request, 'Error encountered: Account ' + tlAccounts.first().display_name + ' is already linked for another user!')
         return redirect('/accounts')
 
     url_suffix = 'data/v1/accounts/' + pk
@@ -167,6 +179,6 @@ def truelayer_link_account(request, pk):
     tlAccount.provider_logo_uri = account['provider']['logo_uri']
     tlAccount.save()
 
-    messages.error(request, 'Account ' + pk + ' successfully linked!')
+    messages.error(request, 'Account ' + tlAccount.display_name + ' successfully linked!')
     return redirect('/accounts')
 

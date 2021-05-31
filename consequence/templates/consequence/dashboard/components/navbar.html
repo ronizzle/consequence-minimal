@@ -14,8 +14,15 @@
 
         {% if 'access_token' in request.session %}
 
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{% url 'accounts_index' %}">Accounts</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            TrueLayer
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="{% url 'truelayer_accounts_index' %}">Accounts</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'truelayer_cards_index' %}">Cards</a></li>
+          </ul>
         </li>
         {% endif %}
         <li class="nav-item">

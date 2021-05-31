@@ -1,0 +1,40 @@
+{% extends 'consequence/dashboard/base.html' %}
+
+{% block content %}
+<p class="h3 header">Cards</p>
+
+{% for message in messages %}
+    <span class="display-flash-message">{{message}}</span>
+{% endfor %}
+
+<table class="table table-dark table-bordered table-hover table-striped">
+    <thead>
+        <th>Display Name</th>
+        <th>Card Network</th>
+        <th>Partial Card Number</th>
+        <th>Name on Card</th>
+        <th>Card Type</th>
+        <th>Currency</th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for card in cards %}
+        <tr>
+            <td>
+                <a href="/home/accounts/{{card.account_id}}">
+                    {{card.display_name}}
+                </a>
+            </td>
+            <td>{{card.card_network}}</td>
+            <td>{{card.partial_card_number}}</td>
+            <td>{{card.name_on_card}}</td>
+            <td>{{card.card_type}}</td>
+            <td>{{card.currency}}</td>
+            <td>
+                <a href="{%url 'truelayer_link_account' card.account_id %}">Link</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
