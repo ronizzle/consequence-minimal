@@ -8,7 +8,7 @@
     <p><a href="{% url 'update_profile' %}">Please click here to update your profile.</a></p>
 {% endif %}
 
-{% if link is not None %}
+{% if link != '' %}
     <p>Please login your true Layer Account</p>
     <p><a href="{{link}}">Login.</a></p>
 {% endif %}

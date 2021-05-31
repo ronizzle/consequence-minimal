@@ -71,6 +71,8 @@ def dashboard_index(request):
         'account': account
     }
 
+    print(request.session['access_token'])
+
     if 'access_token' not in request.session:
         context['link'] = truelayer_link_builder()
 
@@ -108,5 +110,14 @@ def update_profile(request):
 
 
 def truelayer_callback(request):
-    token_json = truelayer_connect_token(request.GET.get('code'))
-    return HttpResponse(request.GET.get('code'))
+    token_auth_response = truelayer_connect_token(request.GET.get('code'))
+    context = {}
+    if 'error' in token_auth_response:
+        return render(request, 'consequence/truelayer/login-error.html', context)
+
+    if 'access_token' in token_auth_response:
+        request.session['refresh_token'] = token_auth_response['refresh_token']
+        request.session['access_token'] = token_auth_response['access_token']
+        return render(request, 'consequence/truelayer/login-success.html', context)
+
+    return redirect('/dashboard_index')

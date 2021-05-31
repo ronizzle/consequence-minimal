@@ -1,7 +1,11 @@
+import requests
+import json
 
 from dotenv import dotenv_values
 
 config = dotenv_values()
+
+
 
 
 def truelayer_link_builder():
@@ -29,4 +33,9 @@ def truelayer_connect_token(code):
         'redirect_uri': redirect_uri,
         'code': code
     }
+
+    r = requests.post(url, data=post_data, auth=(client_id, client_secret))
+    json_response = r.content.decode('utf-8')
+    return json.loads(json_response)
+
 
