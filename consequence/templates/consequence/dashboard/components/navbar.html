@@ -15,7 +15,7 @@
         {% if 'access_token' in request.session %}
 
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Accounts</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'accounts_index' %}">Accounts</a>
         </li>
         {% endif %}
         <li class="nav-item">

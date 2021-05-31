@@ -1,0 +1,36 @@
+{% extends 'consequence/dashboard/base.html' %}
+
+{% block content %}
+<h2>Accounts</h2>
+
+<table class="table table-bordered table-hover table-striped">
+    <thead>
+        <th>Account Number</th>
+        <th>Sort Code</th>
+        <th>Swift Bic</th>
+        <th>Account Type</th>
+        <th>Currency</th>
+        <th>Display Name</th>
+        <th>Provider</th>
+        <th>Date Modified</th>
+    </thead>
+    <tbody>
+        {% for account in accounts %}
+        <tr>
+            <td>
+                <a href="/home/accounts/{{account.account_id}}">
+                    {{account.account_number.number}}
+                </a>
+            </td>
+            <td>{{account.account_number.sort_code}}</td>
+            <td>{{account.account_number.swift_bic}}</td>
+            <td>{{account.account_type}}</td>
+            <td>{{account.currency}}</td>
+            <td>{{account.display_name}}</td>
+            <td>{{account.provider.display_name}}</td>
+            <td>{{account.update_timestamp}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

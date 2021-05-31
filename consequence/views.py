@@ -108,6 +108,7 @@ def update_profile(request):
     return render(request, 'consequence/dashboard/pages/profile.html', context)
 
 
+@login_required(login_url='login_page')
 def truelayer_callback(request):
     token_auth_response = truelayer_connect_token(request.GET.get('code'))
     context = {}
@@ -120,3 +121,17 @@ def truelayer_callback(request):
         return render(request, 'consequence/truelayer/login-success.html', context)
 
     return redirect('/dashboard_index')
+
+
+@login_required(login_url='login_page')
+def accounts(request):
+    if 'access_token' not in request.session:
+        return redirect('/dashboard_index')
+
+    url_suffix = 'data/v1/accounts'
+    accounts = truelayer_rest_call(url_suffix, request.session['access_token'])
+    context = {'accounts': accounts['results']}
+    print(accounts)
+    return render(request, 'consequence/dashboard/pages/accounts.html', context)
+
+

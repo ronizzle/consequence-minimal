@@ -1,11 +1,19 @@
 import requests
 import json
+from urllib import request
 
 from dotenv import dotenv_values
 
 config = dotenv_values()
 
 
+def truelayer_rest_call(url_suffix, access_token):
+    base_url = config['TRUELAYER_API_URL']
+    url = base_url + url_suffix
+    headers = {"Authorization": f"Bearer {access_token}"}
+    r = requests.get(url, headers=headers)
+    json_response = r.content.decode('utf-8')
+    return json.loads(json_response)
 
 
 def truelayer_link_builder():
