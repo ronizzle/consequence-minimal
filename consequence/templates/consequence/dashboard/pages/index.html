@@ -1,6 +1,11 @@
 {% extends 'consequence/dashboard/base.html' %}
 
 {% block content %}
-Hello {{user.username}}
+<h2>Hello {{user.username}}</h2>
+
+{% if account is None %}
+    <p>You have some missing details</p>
+    <p><a href="{% url 'update_profile' %}">Please click here to update your profile.</a></p>
+{% endif %}
 
 {% endblock %}

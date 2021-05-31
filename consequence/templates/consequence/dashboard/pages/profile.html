@@ -1,0 +1,13 @@
+{% extends 'consequence/dashboard/base.html' %}
+
+{% block content %}
+<h2>Edit Profile</h2>
+<form method="POST">
+    {% csrf_token %}
+    <p><strong>{{form.name.label}}</strong>{{form.name}}</p>
+    <p><strong>{{form.nature_of_business.label}}</strong>{{form.nature_of_business}}</p>
+    <p><strong>{{form.number_of_employees.label}}</strong>{{form.number_of_employees}}</p>
+    <br />
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}

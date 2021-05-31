@@ -64,13 +64,45 @@ def logout_user(request):
 @login_required(login_url='login_page')
 def dashboard_index(request):
     user = User.objects.get(id=request.user.id)
+    account = Account.objects.filter(user__id=user.id).first()
     context = {
         'user': user,
         'link': '',
-        'account': user.account
+        'account': account
     }
 
     if 'access_token' not in request.session:
-        context.link = link_builder()
+        context['link'] = link_builder()
 
     return render(request, 'consequence/dashboard/pages/index.html', context)
+
+
+@login_required(login_url='login_page')
+def update_profile(request):
+    user = User.objects.get(id=request.user.id)
+    account = Account.objects.filter(user__id=user.id).first()
+
+    if request.method == 'POST':
+        business_nature = BusinessNature.objects.get(id=request.POST.get('nature_of_business'))
+        form = CreateAccountForm(request.POST)
+
+        if form.is_valid():
+            if account is None:
+                account = Account()
+
+            account.name = request.POST.get('name')
+            account.number_of_employees = request.POST.get('number_of_employees')
+            account.nature_of_business = business_nature
+            account.user = user
+            account.save()
+            return redirect('/profile')
+
+    form = CreateAccountForm()
+    if account is not None:
+        form = CreateAccountForm(instance=account)
+
+    context = {
+        'form': form,
+    }
+    return render(request, 'consequence/dashboard/pages/profile.html', context)
+
