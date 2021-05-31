@@ -12,5 +12,9 @@
     color: white !important;
 }
 .header {
-    color: white !important;
+    color: #F2F2F2 !important;
+}
+
+body {
+    background-color: #0C0C0C !important;
 }
