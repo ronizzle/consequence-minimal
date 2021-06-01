@@ -18,25 +18,73 @@
         </div>
         {% else %}
 
-        {% if link != '' %}
-        <div class="col">
-            <p class="header">Please login your true Layer Account</p>
-            <p class="header">
-                <a href="{{link}}">
-                    <button class="btn btn-danger">
-                        Login.
-                    </button>
-                </a>
-            </p>
-        </div>
-        {% endif %}
-
+            {% if link != '' %}
+            <div class="col">
+                <p class="header">Please login your true Layer Account</p>
+                <p class="header">
+                    <a href="{{link}}">
+                        <button class="btn btn-danger">
+                            Login.
+                        </button>
+                    </a>
+                </p>
+            </div>
+            {% endif %}
         {% endif %}
 
     </div>
     <div class="row">
         <div class="col">
-            <p class="h5 header">Your Total Carbon Impact: {{impact}}</p>
+            <p class="h4 header">Your Total Carbon Impact: {{impact}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p class="h5 header">Your Impact Breakdown:</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table table-dark table-bordered table-hover table-striped">
+                <tbody>
+                    <tr>
+                        <td><strong>Total Categorized</strong></td>
+                        <td><strong>{{impact_categorized}}</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total Uncategorized</strong></td>
+                        <td><strong>{{impact_uncategorized}}</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Average Impact for Categorized Transactions</strong></td>
+                        <td><strong>{{average_impact_categorized}}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table table-dark table-bordered table-hover table-striped">
+                <thead>
+                    <th>Transaction ID</th>
+                    <th>Amount</th>
+                    <th>CO2E Factor</th>
+                    <th>Total CO2E</th>
+                    <th>Source</th>
+                </thead>
+                <tbody>
+                {% for record in records %}
+                    <tr>
+                        <td>{{record.transaction_id}}</td>
+                        <td>{{record.amount}}</td>
+                        <td>{{record.co2e_factor}}</td>
+                        <td>{{record.total_co2e}}</td>
+                        <td>{{record.source}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
