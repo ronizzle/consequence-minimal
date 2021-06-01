@@ -240,6 +240,14 @@ def truelayer_card_record(request, pk):
 
     transactions_url_suffix = 'data/v1/cards/' + pk + '/transactions'
     card_transactions = truelayer_rest_call(transactions_url_suffix, request.session['access_token'])['results']
+
+    for card_transaction in card_transactions:
+        tl_card_transaction = TrueLayerCardTransaction.objects.filter(transaction_id=card_transaction['transaction_id']).first()
+        if tl_card_transaction is not None:
+            card_transaction['linked'] = True
+        else:
+            card_transaction['linked'] = False
+
     context = {'card': card, 'card_transactions': card_transactions, 'tl_card': tl_card}
     return render(request, 'consequence/dashboard/truelayer/card.html', context)
 
