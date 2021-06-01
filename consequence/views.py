@@ -249,15 +249,18 @@ def truelayer_card_record(request, pk):
 def truelayer_account_record(request, pk):
     url_suffix = 'data/v1/accounts/' + pk
     account = truelayer_rest_call(url_suffix, request.session['access_token'])['results'][0]
-
     tl_account = TrueLayerAccount.objects.filter(tl_account_id=pk).first()
     transactions_url_suffix = 'data/v1/accounts/' + pk + '/transactions'
     account_transactions = truelayer_rest_call(transactions_url_suffix, request.session['access_token'])['results']
-    print(account_transactions[0])
+
+    for account_transaction in account_transactions:
+        tl_account_transaction = TrueLayerAccountTransaction.objects.filter(transaction_id=account_transaction['transaction_id']).first()
+        if tl_account_transaction is not None:
+            account_transaction['linked'] = True
+        else:
+            account_transaction['linked'] = False
 
     context = {'account': account, 'account_transactions': account_transactions, 'tl_account': tl_account}
-
-    print(account_transactions[1])
     return render(request, 'consequence/dashboard/truelayer/account.html', context)
 
 
