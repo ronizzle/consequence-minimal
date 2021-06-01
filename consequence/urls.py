@@ -18,4 +18,5 @@ urlpatterns = [
     path('truelayer/account/link/<str:pk>', views.truelayer_link_account, name='truelayer_link_account'),
     path('truelayer/card/link/<str:pk>', views.truelayer_link_card, name='truelayer_link_card'),
     path('truelayer/account/<str:account_id>/link/<str:transaction_id>', views.truelayer_link_account_transaction, name='truelayer_link_account_transaction'),
+    path('truelayer/card/<str:card_id>/link/<str:transaction_id>', views.truelayer_link_card_transaction, name='truelayer_link_card_transaction'),
 ]

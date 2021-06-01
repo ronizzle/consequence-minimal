@@ -149,6 +149,7 @@ def truelayer_cards_index(request):
 
     url_suffix = 'data/v1/cards'
     cards = truelayer_rest_call(url_suffix, request.session['access_token'])
+    print(cards['results'][0])
     context = {'cards': cards['results']}
     return render(request, 'consequence/dashboard/truelayer/cards.html', context)
 
@@ -224,6 +225,7 @@ def truelayer_card_record(request, pk):
     transactions_url_suffix = 'data/v1/cards/' + pk + '/transactions'
     card_transactions = truelayer_rest_call(transactions_url_suffix, request.session['access_token'])['results']
     context = {'card': card, 'card_transactions': card_transactions}
+    print(card_transactions[0])
     return render(request, 'consequence/dashboard/truelayer/card.html', context)
 
 
@@ -302,5 +304,38 @@ def truelayer_link_account_transaction(request, account_id, transaction_id):
         tl_account_transaction.save()
         messages.success(request, 'Successfully linked Account Transaction ID:' + transaction_id)
         return redirect('truelayer_accounts_index')
+
+    return redirect('truelayer_accounts_index')
+
+
+@login_required(login_url='login_page')
+def truelayer_link_card_transaction(request, card_id, transaction_id):
+
+    if request.method == 'POST':
+        tl_card_transaction = TrueLayerCardTransaction.objects.filter(transaction_id=transaction_id).first()
+        tl_card = TrueLayerCard.objects.filter(tl_account_id=card_id).first()
+        print(tl_card)
+        print(card_id)
+
+        if tl_card_transaction is not None:
+            messages.error(request, 'Error encountered: Transaction ID ' + transaction_id + ' already linked in the system.')
+            return redirect('truelayer_cards_index')
+
+        tl_card_transaction = TrueLayerCardTransaction()
+        tl_card_transaction.description = request.POST.get('description')
+        tl_card_transaction.transaction_type = request.POST.get('transaction_type')
+        tl_card_transaction.transaction_category = request.POST.get('transaction_category')
+        tl_card_transaction.merchant_name = request.POST.get('merchant_name')
+        tl_card_transaction.amount = request.POST.get('amount')
+        tl_card_transaction.currency = request.POST.get('currency')
+        tl_card_transaction.provider_transaction_category = request.POST.get('provider_transaction_category')
+        tl_card_transaction.running_balance_amount = request.POST.get('running_balance_amount')
+        tl_card_transaction.running_balance_currency = request.POST.get('running_balance_currency')
+        tl_card_transaction.transaction_id = request.POST.get('transaction_id')
+        tl_card_transaction.account = tl_card.account
+        tl_card_transaction.tl_card = tl_card
+        tl_card_transaction.save()
+        messages.success(request, 'Successfully linked Card Transaction ID:' + transaction_id)
+        return redirect('truelayer_cards_index')
 
     return redirect('truelayer_accounts_index')

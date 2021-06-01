@@ -61,6 +61,7 @@
         <th><strong>Running Balance</strong></th>
         <th><strong>Transaction Category</strong></th>
         <th><strong>Transaction Type</strong></th>
+        <th></th>
     </thead>
     {% for card_transaction in card_transactions %}
         <tr>
@@ -72,6 +73,22 @@
             <td>{{card_transaction.running_balance.amount}}</td>
             <td>{{card_transaction.transaction_category}}</td>
             <td>{{card_transaction.transaction_type}}</td>
+            <td>
+                <form method="POST" action="{%url 'truelayer_link_card_transaction' card.account_id card_transaction.transaction_id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="description" value="{{card_transaction.description}}">
+                    <input type="hidden" name="transaction_type" value="{{card_transaction.transaction_type}}">
+                    <input type="hidden" name="transaction_category" value="{{card_transaction.transaction_category}}">
+                    <input type="hidden" name="merchant_name" value="{{card_transaction.merchant_name}}">
+                    <input type="hidden" name="amount" value="{{card_transaction.amount}}">
+                    <input type="hidden" name="currency" value="{{card_transaction.currency}}">
+                    <input type="hidden" name="transaction_id" value="{{card_transaction.transaction_id}}">
+                    <input type="hidden" name="provider_transaction_category" value="{{card_transaction.meta.provider_transaction_category}}">
+                    <input type="hidden" name="running_balance_currency" value="{{card_transaction.running_balance.currency}}">
+                    <input type="hidden" name="running_balance_amount" value="{{card_transaction.running_balance.amount}}">
+                    <button type="submit" class="btn btn-danger">Link</button>
+                </form>
+            </td>
         </tr>
     {% endfor %}
 </table>
