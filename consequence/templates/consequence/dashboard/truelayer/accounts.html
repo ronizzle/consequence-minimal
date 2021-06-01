@@ -33,7 +33,13 @@
             <td>{{account.display_name}}</td>
             <td>{{account.provider.display_name}}</td>
             <td>
-                <a href="{%url 'truelayer_link_account' account.account_id %}">Link</a>
+                {%if account.linked %}
+                <strong>Linked.</strong>
+                {% else %}
+                <a href="{%url 'truelayer_link_account' account.account_id %}">
+                    <button type="button" class="btn btn-danger">Link</button>
+                </a>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

@@ -138,6 +138,13 @@ def truelayer_accounts_index(request):
 
     url_suffix = 'data/v1/accounts'
     accounts = truelayer_rest_call(url_suffix, request.session['access_token'])
+    for account_result in accounts['results']:
+        tl_account = TrueLayerAccount.objects.filter(tl_account_id=account_result['account_id']).first()
+        if tl_account is not None:
+            account_result['linked'] = True
+        else:
+            account_result['linked'] = False
+
     context = {'accounts': accounts['results']}
     return render(request, 'consequence/dashboard/truelayer/accounts.html', context)
 
