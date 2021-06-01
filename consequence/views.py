@@ -236,4 +236,23 @@ def truelayer_account_record(request, pk):
     transactions_url_suffix = 'data/v1/accounts/' + pk + '/transactions'
     account_transactions = truelayer_rest_call(transactions_url_suffix, request.session['access_token'])['results']
     context = {'account': account, 'account_transactions': account_transactions}
+    print(account_transactions[0])
     return render(request, 'consequence/dashboard/truelayer/account.html', context)
+
+
+
+@login_required(login_url='login_page')
+def truelayer_link_account_transaction(request, accoount_id, transaction_id):
+
+    user = User.objects.get(id=request.user.id)
+    account = Account.objects.filter(user__id=user.id).first()
+    tl_account_transactions = TrueLayerAccountTransaction.objects.filter(transaction_id=accoount_id)
+    if tl_account_transactions.count() > 0:
+        messages.error(request, 'Error encountered: Account ' + tl_account_transactions.first().description + ' is already linked for another user!')
+        return redirect('truelayer_accounts_index')
+
+    url_suffix = 'data/v1/accounts/' + transaction_id + '/transactions'
+    account_transaction = truelayer_rest_call(url_suffix, request.session['access_token'])
+
+    print(account_transaction)
+    return HttpResponse(account_transaction)

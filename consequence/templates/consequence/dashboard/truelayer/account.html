@@ -55,6 +55,12 @@
             <td>{{account_transaction.amount}}</td>
             <td>{{account_transaction.currency}}</td>
             <td>{{account_transaction.running_balance.amount}}</td>
+            <td>
+                <form method="POST" action="{%url 'truelayer_link_account_transaction' account_transaction.transaction_id account_transaction.transaction_id %}">
+
+                    <button type="submit" class="btn btn-danger">Link</button>
+                </form>
+            </td>
         </tr>
     {% endfor %}
 </table>
