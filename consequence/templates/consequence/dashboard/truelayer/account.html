@@ -46,6 +46,7 @@
         <th><strong>Amount</strong></th>
         <th><strong>Currency</strong></th>
         <th><strong>Running Balance</strong></th>
+        <th></th>
     </thead>
     {% for account_transaction in account_transactions %}
         <tr>
@@ -56,8 +57,18 @@
             <td>{{account_transaction.currency}}</td>
             <td>{{account_transaction.running_balance.amount}}</td>
             <td>
-                <form method="POST" action="{%url 'truelayer_link_account_transaction' account_transaction.transaction_id account_transaction.transaction_id %}">
-
+                <form method="POST" action="{%url 'truelayer_link_account_transaction' account.account_id account_transaction.transaction_id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="description" value="{{account_transaction.description}}">
+                    <input type="hidden" name="transaction_type" value="{{account_transaction.transaction_type}}">
+                    <input type="hidden" name="transaction_category" value="{{account_transaction.transaction_category}}">
+                    <input type="hidden" name="merchant_name" value="{{account_transaction.merchant_name}}">
+                    <input type="hidden" name="amount" value="{{account_transaction.amount}}">
+                    <input type="hidden" name="currency" value="{{account_transaction.currency}}">
+                    <input type="hidden" name="transaction_id" value="{{account_transaction.transaction_id}}">
+                    <input type="hidden" name="provider_transaction_category" value="{{account_transaction.meta.provider_transaction_category}}">
+                    <input type="hidden" name="running_balance_currency" value="{{account_transaction.running_balance.currency}}">
+                    <input type="hidden" name="running_balance_amount" value="{{account_transaction.running_balance.amount}}">
                     <button type="submit" class="btn btn-danger">Link</button>
                 </form>
             </td>

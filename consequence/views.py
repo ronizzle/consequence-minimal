@@ -158,7 +158,7 @@ def truelayer_cards_index(request):
 def truelayer_link_account(request, pk):
 
     user = User.objects.get(id=request.user.id)
-    account = Account.objects.filter(user__id=user.id).first()
+    fetched_account = Account.objects.filter(user__id=user.id).first()
     tl_accounts = TrueLayerAccount.objects.filter(tl_account_id=pk)
     if tl_accounts.count() > 0:
         messages.error(request, 'Error encountered: Account ' + tl_accounts.first().display_name + ' is already linked for another user!')
@@ -177,7 +177,7 @@ def truelayer_link_account(request, pk):
     tl_account.provider_display_name = account['provider']['display_name']
     tl_account.provider_id = account['provider']['provider_id']
     tl_account.provider_logo_uri = account['provider']['logo_uri']
-    tl_account = account
+    tl_account.account = fetched_account
     tl_account.save()
 
     messages.error(request, 'Account ' + tl_account.display_name + ' successfully linked!')
@@ -235,24 +235,72 @@ def truelayer_account_record(request, pk):
 
     transactions_url_suffix = 'data/v1/accounts/' + pk + '/transactions'
     account_transactions = truelayer_rest_call(transactions_url_suffix, request.session['access_token'])['results']
-    context = {'account': account, 'account_transactions': account_transactions}
     print(account_transactions[0])
+
+    context = {'account': account, 'account_transactions': account_transactions}
+
+    print(account_transactions[1])
     return render(request, 'consequence/dashboard/truelayer/account.html', context)
 
 
 
 @login_required(login_url='login_page')
-def truelayer_link_account_transaction(request, accoount_id, transaction_id):
+def truelayer_link_account_transaction(request, account_id, transaction_id):
 
-    user = User.objects.get(id=request.user.id)
-    account = Account.objects.filter(user__id=user.id).first()
-    tl_account_transactions = TrueLayerAccountTransaction.objects.filter(transaction_id=accoount_id)
-    if tl_account_transactions.count() > 0:
-        messages.error(request, 'Error encountered: Account ' + tl_account_transactions.first().description + ' is already linked for another user!')
+    if request.method == 'POST':
+        tl_account_transaction = TrueLayerAccountTransaction.objects.filter(transaction_id=transaction_id).first()
+        tl_account = TrueLayerAccount.objects.filter(tl_account_id=account_id).first()
+
+        if tl_account_transaction is not None:
+            messages.error(request, 'Error encountered: Transaction ID ' + transaction_id + ' already linked in the system.')
+            return redirect('truelayer_accounts_index')
+
+        tl_account_transaction = TrueLayerAccountTransaction()
+        tl_account_transaction.description = request.POST.get('description')
+        tl_account_transaction.transaction_type = request.POST.get('transaction_type')
+        tl_account_transaction.transaction_category = request.POST.get('transaction_category')
+        tl_account_transaction.merchant_name = request.POST.get('merchant_name')
+        tl_account_transaction.amount = request.POST.get('amount')
+        tl_account_transaction.currency = request.POST.get('currency')
+        tl_account_transaction.provider_transaction_category = request.POST.get('provider_transaction_category')
+        tl_account_transaction.running_balance_amount = request.POST.get('running_balance_amount')
+        tl_account_transaction.running_balance_currency = request.POST.get('running_balance_currency')
+        tl_account_transaction.transaction_id = request.POST.get('transaction_id')
+        tl_account_transaction.account = tl_account.account
+        tl_account_transaction.tl_account = tl_account
+        tl_account_transaction.save()
+        messages.success(request, 'Successfully linked Account Transaction ID:' + transaction_id)
         return redirect('truelayer_accounts_index')
 
-    url_suffix = 'data/v1/accounts/' + transaction_id + '/transactions'
-    account_transaction = truelayer_rest_call(url_suffix, request.session['access_token'])
+    return redirect('truelayer_accounts_index')
 
-    print(account_transaction)
-    return HttpResponse(account_transaction)
+
+@login_required(login_url='login_page')
+def truelayer_link_account_transaction(request, account_id, transaction_id):
+
+    if request.method == 'POST':
+        tl_account_transaction = TrueLayerAccountTransaction.objects.filter(transaction_id=transaction_id).first()
+        tl_account = TrueLayerAccount.objects.filter(tl_account_id=account_id).first()
+
+        if tl_account_transaction is not None:
+            messages.error(request, 'Error encountered: Transaction ID ' + transaction_id + ' already linked in the system.')
+            return redirect('truelayer_accounts_index')
+
+        tl_account_transaction = TrueLayerAccountTransaction()
+        tl_account_transaction.description = request.POST.get('description')
+        tl_account_transaction.transaction_type = request.POST.get('transaction_type')
+        tl_account_transaction.transaction_category = request.POST.get('transaction_category')
+        tl_account_transaction.merchant_name = request.POST.get('merchant_name')
+        tl_account_transaction.amount = request.POST.get('amount')
+        tl_account_transaction.currency = request.POST.get('currency')
+        tl_account_transaction.provider_transaction_category = request.POST.get('provider_transaction_category')
+        tl_account_transaction.running_balance_amount = request.POST.get('running_balance_amount')
+        tl_account_transaction.running_balance_currency = request.POST.get('running_balance_currency')
+        tl_account_transaction.transaction_id = request.POST.get('transaction_id')
+        tl_account_transaction.account = tl_account.account
+        tl_account_transaction.tl_account = tl_account
+        tl_account_transaction.save()
+        messages.success(request, 'Successfully linked Account Transaction ID:' + transaction_id)
+        return redirect('truelayer_accounts_index')
+
+    return redirect('truelayer_accounts_index')

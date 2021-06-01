@@ -66,6 +66,7 @@ class TrueLayerAccountTransaction(models.Model):
     description = models.CharField(max_length=200, null=True)
     transaction_type = models.CharField(max_length=200, null=True)
     transaction_category = models.CharField(max_length=200, null=True)
+    merchant_name = models.CharField(max_length=200, null=True)
     amount = models.FloatField(null=True)
     currency = models.CharField(max_length=200, null=True, choices=CURRENCY)
     provider_transaction_category = models.CharField(max_length=200, null=True)
@@ -73,6 +74,7 @@ class TrueLayerAccountTransaction(models.Model):
     running_balance_amount = models.FloatField(null=True)
     transaction_id = models.CharField(max_length=200, null=True)
     account = models.ForeignKey(Account, null=True, on_delete=models.SET_NULL)
+    tl_account = models.ForeignKey(TrueLayerAccount, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.description
