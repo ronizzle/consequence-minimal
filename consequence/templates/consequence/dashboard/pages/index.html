@@ -2,32 +2,39 @@
 
 {% block content %}
 <div class="container">
-  <div class="row">
-    <div class="col">
-        <p class="h5 header">Hello {{user.username}}</p>
-    </div>
+    <div class="row">
+        <div class="col">
+            <p class="h5 header">Hello {{user.username}}</p>
+        </div>
 
-    {% if account is None %}
+        {% if account is None %}
         <div class="col">
             <p class="header">You have some missing details</p>
-        <p class="header"><a href="{% url 'update_profile' %}">Please click here to update your profile.</a></p>
+            <p class="header">
+                <a href="{% url 'update_profile' %}">
+                    <button class="btn btn-danger">Please click here to update your profile.</button>
+                </a>
+            </p>
         </div>
-    {% endif %}
+        {% else %}
 
-    {% if link != '' %}
+        {% if link != '' %}
         <div class="col">
             <p class="header">Please login your true Layer Account</p>
             <p class="header">
-                <button class="btn btn-danger">
-                    <a href="{{link}}">Login.</a>
-                </button>
+                <a href="{{link}}">
+                    <button class="btn btn-danger">
+                        Login.
+                    </button>
+                </a>
             </p>
         </div>
-    {% endif %}
-  </div>
+        {% endif %}
+
+        {% endif %}
+
+    </div>
 </div>
-
-
 
 
 {% endblock %}

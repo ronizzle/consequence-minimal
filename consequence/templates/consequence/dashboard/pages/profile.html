@@ -1,13 +1,26 @@
 {% extends 'consequence/dashboard/base.html' %}
 
 {% block content %}
-<h2>Edit Profile</h2>
+<p class="h2 header">Edit Profile</p>
 <form method="POST">
     {% csrf_token %}
-    <p><strong>{{form.name.label}}</strong>{{form.name}}</p>
-    <p><strong>{{form.nature_of_business.label}}</strong>{{form.nature_of_business}}</p>
-    <p><strong>{{form.number_of_employees.label}}</strong>{{form.number_of_employees}}</p>
-    <br />
-    <input type="submit" value="Submit">
+<table class="table table-dark table-bordered table-hover table-striped">
+    <tr>
+        <td><strong>{{form.name.label}}</strong></td>
+        <td>{{form.name}}</td>
+    </tr>
+    <tr>
+        <td><strong>{{form.nature_of_business.label}}</strong></td>
+        <td>{{form.nature_of_business}}</td>
+    </tr>
+    <tr>
+        <td><strong>{{form.number_of_employees.label}}</strong></td>
+        <td>{{form.number_of_employees}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><input type="submit" value="Submit"></td>
+    </tr>
+</table>
+
 </form>
 {% endblock %}
