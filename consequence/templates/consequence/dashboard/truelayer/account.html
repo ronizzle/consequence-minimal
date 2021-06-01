@@ -46,7 +46,9 @@
         <th><strong>Amount</strong></th>
         <th><strong>Currency</strong></th>
         <th><strong>Running Balance</strong></th>
+        {% if tl_account is not None %}
         <th></th>
+        {% endif %}
     </thead>
     {% for account_transaction in account_transactions %}
         <tr>
@@ -56,7 +58,7 @@
             <td>{{account_transaction.amount}}</td>
             <td>{{account_transaction.currency}}</td>
             <td>{{account_transaction.running_balance.amount}}</td>
-            <td>
+            {% if tl_account is not None %} <td>
                 <form method="POST" action="{%url 'truelayer_link_account_transaction' account.account_id account_transaction.transaction_id %}">
                     {% csrf_token %}
                     <input type="hidden" name="description" value="{{account_transaction.description}}">
@@ -72,6 +74,8 @@
                     <button type="submit" class="btn btn-danger">Link</button>
                 </form>
             </td>
+            {% endif %}
+
         </tr>
     {% endfor %}
 </table>

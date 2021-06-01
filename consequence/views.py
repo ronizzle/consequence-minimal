@@ -222,10 +222,11 @@ def truelayer_card_record(request, pk):
     url_suffix = 'data/v1/cards/' + pk
     card = truelayer_rest_call(url_suffix, request.session['access_token'])['results'][0]
 
+    tl_card = TrueLayerCard.objects.filter(tl_account_id=pk).first()
+
     transactions_url_suffix = 'data/v1/cards/' + pk + '/transactions'
     card_transactions = truelayer_rest_call(transactions_url_suffix, request.session['access_token'])['results']
-    context = {'card': card, 'card_transactions': card_transactions}
-    print(card_transactions[0])
+    context = {'card': card, 'card_transactions': card_transactions, 'tl_card': tl_card}
     return render(request, 'consequence/dashboard/truelayer/card.html', context)
 
 
@@ -235,11 +236,12 @@ def truelayer_account_record(request, pk):
     url_suffix = 'data/v1/accounts/' + pk
     account = truelayer_rest_call(url_suffix, request.session['access_token'])['results'][0]
 
+    tl_account = TrueLayerAccount.objects.filter(tl_account_id=pk).first()
     transactions_url_suffix = 'data/v1/accounts/' + pk + '/transactions'
     account_transactions = truelayer_rest_call(transactions_url_suffix, request.session['access_token'])['results']
     print(account_transactions[0])
 
-    context = {'account': account, 'account_transactions': account_transactions}
+    context = {'account': account, 'account_transactions': account_transactions, 'tl_account': tl_account}
 
     print(account_transactions[1])
     return render(request, 'consequence/dashboard/truelayer/account.html', context)
