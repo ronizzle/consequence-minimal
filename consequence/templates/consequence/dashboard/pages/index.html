@@ -1,17 +1,33 @@
 {% extends 'consequence/dashboard/base.html' %}
 
 {% block content %}
-<h2>Hello {{user.username}}</h2>
+<div class="container">
+  <div class="row">
+    <div class="col">
+        <p class="h5 header">Hello {{user.username}}</p>
+    </div>
 
-{% if account is None %}
-    <p>You have some missing details</p>
-    <p><a href="{% url 'update_profile' %}">Please click here to update your profile.</a></p>
-{% endif %}
+    {% if account is None %}
+        <div class="col">
+            <p class="header">You have some missing details</p>
+        <p class="header"><a href="{% url 'update_profile' %}">Please click here to update your profile.</a></p>
+        </div>
+    {% endif %}
 
-{% if link != '' %}
-    <p>Please login your true Layer Account</p>
-    <p><a href="{{link}}">Login.</a></p>
-{% endif %}
+    {% if link != '' %}
+        <div class="col">
+            <p class="header">Please login your true Layer Account</p>
+            <p class="header">
+                <button class="btn btn-danger">
+                    <a href="{{link}}">Login.</a>
+                </button>
+            </p>
+        </div>
+    {% endif %}
+  </div>
+</div>
+
+
 
 
 {% endblock %}
