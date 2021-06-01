@@ -40,7 +40,7 @@
 
 <table class="table table-dark table-bordered table-hover table-striped">
     <thead>
-        <th><strong>Timestamp</strong></th>
+        <th><strong>Merchant</strong></th>
         <th><strong>Description</strong></th>
         <th><strong>Transaction Type</strong></th>
         <th><strong>Amount</strong></th>
@@ -52,7 +52,7 @@
     </thead>
     {% for account_transaction in account_transactions %}
         <tr>
-            <td>{{account_transaction.timestamp}}</td>
+            <td>{{account_transaction.merchant_name}}</td>
             <td>{{account_transaction.description}}</td>
             <td>{{account_transaction.transaction_type}}</td>
             <td>{{account_transaction.amount}}</td>
@@ -75,6 +75,7 @@
                             <input type="hidden" name="provider_transaction_category" value="{{account_transaction.meta.provider_transaction_category}}">
                             <input type="hidden" name="running_balance_currency" value="{{account_transaction.running_balance.currency}}">
                             <input type="hidden" name="running_balance_amount" value="{{account_transaction.running_balance.amount}}">
+                            <input type="hidden" name="transaction_classification_primary" value="{{account_transaction.transaction_classification_primary}}">
                             <button type="submit" class="btn btn-danger">Link</button>
                         </form>
                     {% endif %}

@@ -268,6 +268,11 @@ def truelayer_account_record(request, pk):
     account_transactions = truelayer_rest_call(transactions_url_suffix, request.session['access_token'])['results']
 
     for account_transaction in account_transactions:
+        account_transaction['transaction_classification_primary'] = 'Uncategorized'
+
+        if len(account_transaction['transaction_classification']) > 0:
+            account_transaction['transaction_classification_primary'] = account_transaction['transaction_classification'][0]
+
         tl_account_transaction = TrueLayerAccountTransaction.objects.filter(transaction_id=account_transaction['transaction_id']).first()
         if tl_account_transaction is not None:
             account_transaction['linked'] = True
