@@ -31,7 +31,13 @@
             <td>{{card.card_type}}</td>
             <td>{{card.currency}}</td>
             <td>
-                <a href="{%url 'truelayer_link_card' card.account_id %}">Link</a>
+                {%if card.linked %}
+                <strong>Linked.</strong>
+                {% else %}
+                <a href="{%url 'truelayer_link_card' card.account_id %}">
+                    <button type="button" class="btn btn-danger">Link</button>
+                </a>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

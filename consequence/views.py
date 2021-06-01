@@ -156,7 +156,14 @@ def truelayer_cards_index(request):
 
     url_suffix = 'data/v1/cards'
     cards = truelayer_rest_call(url_suffix, request.session['access_token'])
-    print(cards['results'][0])
+
+    for card_result in cards['results']:
+        tl_card = TrueLayerCard.objects.filter(tl_account_id=card_result['account_id']).first()
+        if tl_card is not None:
+            card_result['linked'] = True
+        else:
+            card_result['linked'] = False
+
     context = {'cards': cards['results']}
     return render(request, 'consequence/dashboard/truelayer/cards.html', context)
 
