@@ -93,6 +93,7 @@
                             <input type="hidden" name="provider_transaction_category" value="{{card_transaction.meta.provider_transaction_category}}">
                             <input type="hidden" name="running_balance_currency" value="{{card_transaction.running_balance.currency}}">
                             <input type="hidden" name="running_balance_amount" value="{{card_transaction.running_balance.amount}}">
+                            <input type="hidden" name="transaction_classification_primary" value="{{card_transaction.transaction_classification_primary}}">
                             <button type="submit" class="btn btn-danger">Link</button>
                         </form>
                     {% endif %}

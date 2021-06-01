@@ -242,7 +242,13 @@ def truelayer_card_record(request, pk):
     card_transactions = truelayer_rest_call(transactions_url_suffix, request.session['access_token'])['results']
 
     for card_transaction in card_transactions:
+        card_transaction['transaction_classification_primary'] = 'Uncategorized'
+
+        if len(card_transaction['transaction_classification']) > 0:
+            card_transaction['transaction_classification_primary'] = card_transaction['transaction_classification'][0]
+
         tl_card_transaction = TrueLayerCardTransaction.objects.filter(transaction_id=card_transaction['transaction_id']).first()
+
         if tl_card_transaction is not None:
             card_transaction['linked'] = True
         else:
@@ -295,37 +301,7 @@ def truelayer_link_account_transaction(request, account_id, transaction_id):
         tl_account_transaction.running_balance_amount = request.POST.get('running_balance_amount')
         tl_account_transaction.running_balance_currency = request.POST.get('running_balance_currency')
         tl_account_transaction.transaction_id = request.POST.get('transaction_id')
-        tl_account_transaction.account = tl_account.account
-        tl_account_transaction.tl_account = tl_account
-        tl_account_transaction.save()
-        messages.success(request, 'Successfully linked Account Transaction ID:' + transaction_id)
-        return redirect('truelayer_accounts_index')
-
-    return redirect('truelayer_accounts_index')
-
-
-@login_required(login_url='login_page')
-def truelayer_link_account_transaction(request, account_id, transaction_id):
-
-    if request.method == 'POST':
-        tl_account_transaction = TrueLayerAccountTransaction.objects.filter(transaction_id=transaction_id).first()
-        tl_account = TrueLayerAccount.objects.filter(tl_account_id=account_id).first()
-
-        if tl_account_transaction is not None:
-            messages.error(request, 'Error encountered: Transaction ID ' + transaction_id + ' already linked in the system.')
-            return redirect('truelayer_accounts_index')
-
-        tl_account_transaction = TrueLayerAccountTransaction()
-        tl_account_transaction.description = request.POST.get('description')
-        tl_account_transaction.transaction_type = request.POST.get('transaction_type')
-        tl_account_transaction.transaction_category = request.POST.get('transaction_category')
-        tl_account_transaction.merchant_name = request.POST.get('merchant_name')
-        tl_account_transaction.amount = request.POST.get('amount')
-        tl_account_transaction.currency = request.POST.get('currency')
-        tl_account_transaction.provider_transaction_category = request.POST.get('provider_transaction_category')
-        tl_account_transaction.running_balance_amount = request.POST.get('running_balance_amount')
-        tl_account_transaction.running_balance_currency = request.POST.get('running_balance_currency')
-        tl_account_transaction.transaction_id = request.POST.get('transaction_id')
+        tl_account_transaction.transaction_classification_primary = request.POST.get('transaction_classification_primary')
         tl_account_transaction.account = tl_account.account
         tl_account_transaction.tl_account = tl_account
         tl_account_transaction.save()
@@ -358,6 +334,7 @@ def truelayer_link_card_transaction(request, card_id, transaction_id):
         tl_card_transaction.provider_transaction_category = request.POST.get('provider_transaction_category')
         tl_card_transaction.running_balance_amount = request.POST.get('running_balance_amount')
         tl_card_transaction.running_balance_currency = request.POST.get('running_balance_currency')
+        tl_card_transaction.transaction_classification_primary = request.POST.get('transaction_classification_primary')
         tl_card_transaction.transaction_id = request.POST.get('transaction_id')
         tl_card_transaction.account = tl_card.account
         tl_card_transaction.tl_card = tl_card

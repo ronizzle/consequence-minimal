@@ -66,6 +66,7 @@ class TrueLayerAccountTransaction(models.Model):
     description = models.CharField(max_length=200, null=True)
     transaction_type = models.CharField(max_length=200, null=True)
     transaction_category = models.CharField(max_length=200, null=True)
+    transaction_classification_primary = models.CharField(max_length=200, null=True)
     merchant_name = models.CharField(max_length=200, null=True)
     amount = models.FloatField(null=True)
     currency = models.CharField(max_length=200, null=True, choices=CURRENCY)
@@ -85,6 +86,7 @@ class TrueLayerCardTransaction(models.Model):
     description = models.CharField(max_length=200, null=True)
     transaction_type = models.CharField(max_length=200, null=True)
     transaction_category = models.CharField(max_length=200, null=True)
+    transaction_classification_primary = models.CharField(max_length=200, null=True)
     merchant_name = models.CharField(max_length=200, null=True)
     amount = models.FloatField(null=True)
     currency = models.CharField(max_length=200, null=True, choices=CURRENCY)
@@ -97,3 +99,20 @@ class TrueLayerCardTransaction(models.Model):
 
     def __str__(self):
         return self.description
+
+
+class TrueLayerMerchant(models.Model):
+    merchant_name = models.CharField(max_length=200, null=True)
+    co2e_factor = models.FloatField(null=True)
+
+    def __str__(self):
+        return self.merchant_name
+
+
+class TrueLayerClassification(models.Model):
+    transaction_classification = models.CharField(max_length=200, null=True)
+    co2e_factor = models.FloatField(null=True)
+
+    def __str__(self):
+        return self.transaction_classification
+
