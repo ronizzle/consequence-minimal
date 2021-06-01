@@ -70,10 +70,13 @@ def logout_user(request):
 def dashboard_index(request):
     user = User.objects.get(id=request.user.id)
     account = Account.objects.filter(user__id=user.id).first()
+    impact = calculate_total_impact(account)
+
     context = {
         'user': user,
         'link': '',
-        'account': account
+        'account': account,
+        'impact': impact,
     }
 
     if 'access_token' not in request.session:
@@ -348,3 +351,57 @@ def truelayer_link_card_transaction(request, card_id, transaction_id):
         return redirect('truelayer_cards_index')
 
     return redirect('truelayer_accounts_index')
+
+
+def calculate_total_impact(account):
+    tl_card_transactions = TrueLayerCardTransaction.objects.filter(account=account)
+    tl_account_transactions = TrueLayerAccountTransaction.objects.filter(account=account)
+    total_co2e_factor = 0
+    total_amount_uncategorized = 0
+    classified_ctr = 0
+
+    for tl_card_transaction in tl_card_transactions:
+
+        tl_merchant = TrueLayerMerchant.objects.filter(merchant_name=tl_card_transaction.merchant_name).first()
+
+        if tl_merchant is not None:
+            print('amount:' + str(tl_card_transaction.amount) + ' co2e_factor:' + str(tl_merchant.co2e_factor))
+            total_co2e_factor = total_co2e_factor + (tl_card_transaction.amount * tl_merchant.co2e_factor)
+            classified_ctr += 1
+
+        elif tl_merchant is None:
+            tl_classification = TrueLayerClassification.objects.filter(transaction_classification=tl_card_transaction.transaction_classification_primary).first()
+            if tl_classification is not None:
+                print('amount:' + str(tl_card_transaction.amount) + ' co2e_factor:' + str(tl_classification.co2e_factor))
+                total_co2e_factor = total_co2e_factor + (tl_card_transaction.amount * tl_classification.co2e_factor)
+                classified_ctr += 1
+            elif tl_classification is None:
+                total_amount_uncategorized = total_amount_uncategorized + tl_card_transaction.amount
+
+    average_impact_categorized = (total_co2e_factor / classified_ctr)
+    impact_uncategorized = average_impact_categorized * total_amount_uncategorized
+    total_co2e_factor = total_co2e_factor + impact_uncategorized
+
+    for tl_account_transaction in tl_account_transactions:
+
+        tl_merchant = TrueLayerMerchant.objects.filter(merchant_name=tl_account_transaction.merchant_name).first()
+
+        if tl_merchant is not None:
+            print('amount:' + str(tl_account_transaction.amount) + ' co2e_factor:' + str(tl_merchant.co2e_factor))
+            total_co2e_factor = total_co2e_factor + (tl_account_transaction.amount * tl_merchant.co2e_factor)
+            classified_ctr += 1
+
+        elif tl_merchant is None:
+            tl_classification = TrueLayerClassification.objects.filter(transaction_classification=tl_account_transaction.transaction_classification_primary).first()
+            if tl_classification is not None:
+                print('amount:' + str(tl_account_transaction.amount) + ' co2e_factor:' + str(tl_classification.co2e_factor))
+                total_co2e_factor = total_co2e_factor + (tl_account_transaction.amount * tl_classification.co2e_factor)
+                classified_ctr += 1
+            elif tl_classification is None:
+                total_amount_uncategorized = total_amount_uncategorized + tl_account_transaction.amount
+
+    average_impact_categorized = (total_co2e_factor / classified_ctr)
+    impact_uncategorized = average_impact_categorized * total_amount_uncategorized
+    total_co2e_factor = total_co2e_factor + impact_uncategorized
+
+    return total_co2e_factor
