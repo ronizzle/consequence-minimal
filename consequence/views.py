@@ -249,7 +249,7 @@ def truelayer_account_record(request, pk):
 
         if len(account_transaction['transaction_classification']) > 0:
             account_transaction['transaction_classification_primary'] = \
-            account_transaction['transaction_classification'][0]
+                account_transaction['transaction_classification'][0]
 
         tl_account_transaction = TrueLayerAccountTransaction.objects.filter(
             transaction_id=account_transaction['transaction_id']).first()
@@ -472,7 +472,10 @@ def calculate_impact(account):
                     'impact': 'NA',
                 })
 
-    average_co2e_factor = total_co2e_factor / classified_ctr
+    average_co2e_factor = 0
+    if classified_ctr > 0:
+        average_co2e_factor = total_co2e_factor / classified_ctr
+
     impact_uncategorized = average_co2e_factor * total_amount_uncategorized
     impact_categorized = total_impact
 
