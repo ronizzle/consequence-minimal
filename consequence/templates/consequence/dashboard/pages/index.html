@@ -48,24 +48,36 @@
             <table class="table table-dark table-bordered table-hover table-striped">
                 <tbody>
                     <tr>
-                        <td><strong>Total Categorized</strong></td>
+                        <td><strong>Total Impact for Transactions with Merchant/Classification</strong></td>
                         <td><strong>{{impact_categorized}}</strong></td>
                     </tr>
                     <tr>
-                        <td><strong>Total Uncategorized</strong></td>
+                        <td><strong>Total Impact for Transactions without Merchant/Classification</strong></td>
                         <td><strong>{{impact_uncategorized}}</strong></td>
                     </tr>
                     <tr>
-                        <td><strong>Average Impact for Categorized Transactions</strong></td>
+                        <td><strong>Average CO2E for Categorized Transactions</strong></td>
                         <td><strong>{{average_impact_categorized}}</strong></td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
+
+
     <div class="row">
         <div class="col">
-            <table class="table table-dark table-bordered table-hover table-striped">
+            <button type="button" class="btn btn-danger" data-transaction-table-toggle-btn="">Toggle Transactions Visibility</button>
+        </div>
+    </div>
+    <div class="row d-none" data-transaction-table-label="">
+        <div class="col">
+            <p class="h5 header d-none">Transactions</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table table-dark table-bordered table-hover table-striped d-none" data-transaction-table="">
                 <thead>
                     <th>Transaction ID</th>
                     <th>Amount</th>
@@ -76,15 +88,15 @@
                 <tbody>
                 {% for record in records %}
                     <tr>
-                        <td>{{record.transaction_id}}</td>
+                        <td><p><span><strong>{{record.transaction.type}}:</strong></span>&nbsp;<span><i>{{record.transaction.id}}</i></span></p></td>
                         <td>{{record.amount}}</td>
                         <td>{{record.co2e_factor}}</td>
                         <td>{{record.impact}}</td>
                         <td>
                             {% if record.source.type is None %}
-                                <p>NA</p>
+                                <p><span>NA</span></p>
                             {% else %}
-                                <p><span>{{record.source.type}}:</span>&nbsp;<strong>{{record.source.label}}</strong></p>
+                                <p><span>{{record.source.type}}:</span>&nbsp;<span><strong>{{record.source.label}}</strong></span></p>
                             {% endif %}
                         </td>
                     </tr>
@@ -94,6 +106,17 @@
         </div>
     </div>
 </div>
+<script>
+    $('[data-transaction-table-toggle-btn]').on('click', function() {
+        if($('[data-transaction-table]').hasClass('d-none')) {
+            $('[data-transaction-table]').removeClass('d-none');
+            $('[data-transaction-table-label]').removeClass('d-none');
+        } else {
+            $('[data-transaction-table]').addClass('d-none');
+            $('[data-transaction-table-label]').addClass('d-none');
+        }
 
+    });
+</script>
 
 {% endblock %}
