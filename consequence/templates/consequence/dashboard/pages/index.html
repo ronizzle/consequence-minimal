@@ -35,7 +35,7 @@
     </div>
     <div class="row">
         <div class="col">
-            <p class="h4 header">Your Total Carbon Impact: {{impact}}</p>
+            <p class="h4 header">Your Total Carbon Impact: {{total_impact}}</p>
         </div>
     </div>
     <div class="row">
@@ -79,8 +79,14 @@
                         <td>{{record.transaction_id}}</td>
                         <td>{{record.amount}}</td>
                         <td>{{record.co2e_factor}}</td>
-                        <td>{{record.total_co2e}}</td>
-                        <td>{{record.source}}</td>
+                        <td>{{record.impact}}</td>
+                        <td>
+                            {% if record.source.type is None %}
+                                <p>NA</p>
+                            {% else %}
+                                <p><span>{{record.source.type}}:</span>&nbsp;<strong>{{record.source.label}}</strong></p>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

@@ -67,33 +67,6 @@ def logout_user(request):
 
 
 @login_required(login_url='login_page')
-def dashboard_index(request):
-    user = User.objects.get(id=request.user.id)
-    account = Account.objects.filter(user__id=user.id).first()
-    impact = calculate_total_impact(account)
-    breakdown = get_impact_records_breakdown(account)
-
-    # {'records': records, 'impact_uncategorized': impact_uncategorized,
-    # 'average_impact_categorized': average_impact_categorized, 'impact_categorized': impact_categorized}
-
-    context = {
-        'user': user,
-        'link': '',
-        'account': account,
-        'impact': impact,
-        'records': breakdown['records'],
-        'impact_uncategorized': breakdown['impact_uncategorized'],
-        'average_impact_categorized': breakdown['average_impact_categorized'],
-        'impact_categorized': breakdown['impact_categorized'],
-    }
-
-    if 'access_token' not in request.session:
-        context['link'] = truelayer_link_builder()
-
-    return render(request, 'consequence/dashboard/pages/index.html', context)
-
-
-@login_required(login_url='login_page')
 def update_profile(request):
     user = User.objects.get(id=request.user.id)
     account = Account.objects.filter(user__id=user.id).first()
@@ -123,9 +96,6 @@ def update_profile(request):
     return render(request, 'consequence/dashboard/pages/profile.html', context)
 
 
-
-
-
 @login_required(login_url='login_page')
 def truelayer_callback(request):
     token_auth_response = truelayer_connect_token(request.GET.get('code'))
@@ -139,7 +109,6 @@ def truelayer_callback(request):
         return render(request, 'consequence/truelayer/login-success.html', context)
 
     return redirect('/dashboard_index')
-
 
 
 @login_required(login_url='login_page')
@@ -179,15 +148,14 @@ def truelayer_cards_index(request):
     return render(request, 'consequence/dashboard/truelayer/cards.html', context)
 
 
-
 @login_required(login_url='login_page')
 def truelayer_link_account(request, pk):
-
     user = User.objects.get(id=request.user.id)
     fetched_account = Account.objects.filter(user__id=user.id).first()
     tl_accounts = TrueLayerAccount.objects.filter(tl_account_id=pk)
     if tl_accounts.count() > 0:
-        messages.error(request, 'Error encountered: Account ' + tl_accounts.first().display_name + ' is already linked for another user!')
+        messages.error(request,
+                       'Error encountered: Account ' + tl_accounts.first().display_name + ' is already linked for another user!')
         return redirect('truelayer_accounts_index')
 
     url_suffix = 'data/v1/accounts/' + pk
@@ -210,15 +178,14 @@ def truelayer_link_account(request, pk):
     return redirect('truelayer_accounts_index')
 
 
-
 @login_required(login_url='login_page')
 def truelayer_link_card(request, pk):
-
     user = User.objects.get(id=request.user.id)
     account = Account.objects.filter(user__id=user.id).first()
     tl_cards = TrueLayerCard.objects.filter(tl_account_id=pk)
     if tl_cards.count() > 0:
-        messages.error(request, 'Error encountered: Card ' + tl_cards.first().display_name + ' is already linked for another user!')
+        messages.error(request,
+                       'Error encountered: Card ' + tl_cards.first().display_name + ' is already linked for another user!')
         return redirect('truelayer_cards_index')
 
     url_suffix = 'data/v1/cards/' + pk
@@ -241,7 +208,6 @@ def truelayer_link_card(request, pk):
     return redirect('truelayer_cards_index')
 
 
-
 @login_required(login_url='login_page')
 def truelayer_card_record(request, pk):
     url_suffix = 'data/v1/cards/' + pk
@@ -258,7 +224,8 @@ def truelayer_card_record(request, pk):
         if len(card_transaction['transaction_classification']) > 0:
             card_transaction['transaction_classification_primary'] = card_transaction['transaction_classification'][0]
 
-        tl_card_transaction = TrueLayerCardTransaction.objects.filter(transaction_id=card_transaction['transaction_id']).first()
+        tl_card_transaction = TrueLayerCardTransaction.objects.filter(
+            transaction_id=card_transaction['transaction_id']).first()
 
         if tl_card_transaction is not None:
             card_transaction['linked'] = True
@@ -267,7 +234,6 @@ def truelayer_card_record(request, pk):
 
     context = {'card': card, 'card_transactions': card_transactions, 'tl_card': tl_card}
     return render(request, 'consequence/dashboard/truelayer/card.html', context)
-
 
 
 @login_required(login_url='login_page')
@@ -282,9 +248,11 @@ def truelayer_account_record(request, pk):
         account_transaction['transaction_classification_primary'] = 'Uncategorized'
 
         if len(account_transaction['transaction_classification']) > 0:
-            account_transaction['transaction_classification_primary'] = account_transaction['transaction_classification'][0]
+            account_transaction['transaction_classification_primary'] = \
+            account_transaction['transaction_classification'][0]
 
-        tl_account_transaction = TrueLayerAccountTransaction.objects.filter(transaction_id=account_transaction['transaction_id']).first()
+        tl_account_transaction = TrueLayerAccountTransaction.objects.filter(
+            transaction_id=account_transaction['transaction_id']).first()
         if tl_account_transaction is not None:
             account_transaction['linked'] = True
         else:
@@ -294,16 +262,15 @@ def truelayer_account_record(request, pk):
     return render(request, 'consequence/dashboard/truelayer/account.html', context)
 
 
-
 @login_required(login_url='login_page')
 def truelayer_link_account_transaction(request, account_id, transaction_id):
-
     if request.method == 'POST':
         tl_account_transaction = TrueLayerAccountTransaction.objects.filter(transaction_id=transaction_id).first()
         tl_account = TrueLayerAccount.objects.filter(tl_account_id=account_id).first()
 
         if tl_account_transaction is not None:
-            messages.error(request, 'Error encountered: Transaction ID ' + transaction_id + ' already linked in the system.')
+            messages.error(request,
+                           'Error encountered: Transaction ID ' + transaction_id + ' already linked in the system.')
             return redirect('truelayer_accounts_index')
 
         tl_account_transaction = TrueLayerAccountTransaction()
@@ -317,7 +284,8 @@ def truelayer_link_account_transaction(request, account_id, transaction_id):
         tl_account_transaction.running_balance_amount = request.POST.get('running_balance_amount')
         tl_account_transaction.running_balance_currency = request.POST.get('running_balance_currency')
         tl_account_transaction.transaction_id = request.POST.get('transaction_id')
-        tl_account_transaction.transaction_classification_primary = request.POST.get('transaction_classification_primary')
+        tl_account_transaction.transaction_classification_primary = request.POST.get(
+            'transaction_classification_primary')
         tl_account_transaction.account = tl_account.account
         tl_account_transaction.tl_account = tl_account
         tl_account_transaction.save()
@@ -329,7 +297,6 @@ def truelayer_link_account_transaction(request, account_id, transaction_id):
 
 @login_required(login_url='login_page')
 def truelayer_link_card_transaction(request, card_id, transaction_id):
-
     if request.method == 'POST':
         tl_card_transaction = TrueLayerCardTransaction.objects.filter(transaction_id=transaction_id).first()
         tl_card = TrueLayerCard.objects.filter(tl_account_id=card_id).first()
@@ -337,7 +304,8 @@ def truelayer_link_card_transaction(request, card_id, transaction_id):
         print(card_id)
 
         if tl_card_transaction is not None:
-            messages.error(request, 'Error encountered: Transaction ID ' + transaction_id + ' already linked in the system.')
+            messages.error(request,
+                           'Error encountered: Transaction ID ' + transaction_id + ' already linked in the system.')
             return redirect('truelayer_cards_index')
 
         tl_card_transaction = TrueLayerCardTransaction()
@@ -361,63 +329,35 @@ def truelayer_link_card_transaction(request, card_id, transaction_id):
     return redirect('truelayer_accounts_index')
 
 
-def calculate_total_impact(account):
+@login_required(login_url='login_page')
+def dashboard_index(request):
+    user = User.objects.get(id=request.user.id)
+    account = Account.objects.filter(user__id=user.id).first()
+    impact = calculate_impact(account)
+
+    # {'records': records, 'impact_uncategorized': impact_uncategorized,
+    # 'average_impact_categorized': average_impact_categorized, 'impact_categorized': impact_categorized}
+
+    context = {
+        'user': user,
+        'link': '',
+        'account': account,
+        'total_impact': impact['total_impact'],
+        'records': impact['records'],
+        'impact_uncategorized': impact['impact_uncategorized'],
+        'average_impact_categorized': impact['average_co2e_factor'],
+        'impact_categorized': impact['impact_categorized'],
+    }
+
+    if 'access_token' not in request.session:
+        context['link'] = truelayer_link_builder()
+
+    return render(request, 'consequence/dashboard/pages/index.html', context)
+
+
+def calculate_impact(account):
     tl_card_transactions = TrueLayerCardTransaction.objects.filter(account=account)
-    tl_account_transactions = TrueLayerAccountTransaction.objects.filter(account=account)
-    total_co2e_factor = 0
-    total_amount_uncategorized = 0
-    classified_ctr = 0
-
-    for tl_card_transaction in tl_card_transactions:
-
-        tl_merchant = TrueLayerMerchant.objects.filter(merchant_name=tl_card_transaction.merchant_name).first()
-
-        if tl_merchant is not None:
-            print('amount:' + str(tl_card_transaction.amount) + ' co2e_factor:' + str(tl_merchant.co2e_factor))
-            total_co2e_factor = total_co2e_factor + (tl_card_transaction.amount * tl_merchant.co2e_factor)
-            classified_ctr += 1
-
-        elif tl_merchant is None:
-            tl_classification = TrueLayerClassification.objects.filter(transaction_classification=tl_card_transaction.transaction_classification_primary).first()
-            if tl_classification is not None:
-                print('amount:' + str(tl_card_transaction.amount) + ' co2e_factor:' + str(tl_classification.co2e_factor))
-                total_co2e_factor = total_co2e_factor + (tl_card_transaction.amount * tl_classification.co2e_factor)
-                classified_ctr += 1
-            elif tl_classification is None:
-                total_amount_uncategorized = total_amount_uncategorized + tl_card_transaction.amount
-
-    average_impact_categorized = (total_co2e_factor / classified_ctr)
-    impact_uncategorized = average_impact_categorized * total_amount_uncategorized
-    total_co2e_factor = total_co2e_factor + impact_uncategorized
-
-    for tl_account_transaction in tl_account_transactions:
-
-        tl_merchant = TrueLayerMerchant.objects.filter(merchant_name=tl_account_transaction.merchant_name).first()
-
-        if tl_merchant is not None:
-            print('amount:' + str(tl_account_transaction.amount) + ' co2e_factor:' + str(tl_merchant.co2e_factor))
-            total_co2e_factor = total_co2e_factor + (tl_account_transaction.amount * tl_merchant.co2e_factor)
-            classified_ctr += 1
-
-        elif tl_merchant is None:
-            tl_classification = TrueLayerClassification.objects.filter(transaction_classification=tl_account_transaction.transaction_classification_primary).first()
-            if tl_classification is not None:
-                print('amount:' + str(tl_account_transaction.amount) + ' co2e_factor:' + str(tl_classification.co2e_factor))
-                total_co2e_factor = total_co2e_factor + (tl_account_transaction.amount * tl_classification.co2e_factor)
-                classified_ctr += 1
-            elif tl_classification is None:
-                total_amount_uncategorized = total_amount_uncategorized + tl_account_transaction.amount
-
-    average_impact_categorized = (total_co2e_factor / classified_ctr)
-    impact_uncategorized = average_impact_categorized * total_amount_uncategorized
-    total_co2e_factor = total_co2e_factor + impact_uncategorized
-
-    return total_co2e_factor
-
-
-def get_impact_records_breakdown(account):
-    tl_card_transactions = TrueLayerCardTransaction.objects.filter(account=account)
-    tl_account_transactions = TrueLayerAccountTransaction.objects.filter(account=account)
+    total_impact = 0
     total_co2e_factor = 0
     total_amount_uncategorized = 0
     classified_ctr = 0
@@ -428,57 +368,57 @@ def get_impact_records_breakdown(account):
         tl_merchant = TrueLayerMerchant.objects.filter(merchant_name=tl_card_transaction.merchant_name).first()
 
         if tl_merchant is not None:
-            total_co2e_factor = total_co2e_factor + (tl_card_transaction.amount * tl_merchant.co2e_factor)
-            classified_ctr += 1
-
-        elif tl_merchant is None:
-            tl_classification = TrueLayerClassification.objects.filter(transaction_classification=tl_card_transaction.transaction_classification_primary).first()
-            if tl_classification is not None:
-                print('amount:' + str(tl_card_transaction.amount) + ' co2e_factor:' + str(tl_classification.co2e_factor))
-                total_co2e_factor = total_co2e_factor + (tl_card_transaction.amount * tl_classification.co2e_factor)
-                classified_ctr += 1
-            elif tl_classification is None:
-                total_amount_uncategorized = total_amount_uncategorized + tl_card_transaction.amount
-
-    average_impact_categorized = (total_co2e_factor / classified_ctr)
-    impact_uncategorized = average_impact_categorized * total_amount_uncategorized
-    total_co2e_factor = total_co2e_factor + impact_uncategorized
-
-    for tl_account_transaction in tl_account_transactions:
-
-        tl_merchant = TrueLayerMerchant.objects.filter(merchant_name=tl_account_transaction.merchant_name).first()
-
-        if tl_merchant is not None:
-            total_co2e_factor = total_co2e_factor + (tl_account_transaction.amount * tl_merchant.co2e_factor)
+            impact = (tl_card_transaction.amount * tl_merchant.co2e_factor)
+            total_impact = total_impact + (tl_card_transaction.amount * tl_merchant.co2e_factor)
+            total_co2e_factor = total_co2e_factor + tl_merchant.co2e_factor
             records.append({
-                'transaction_id': tl_account_transaction.transaction_id,
-                'amount': tl_account_transaction.amount,
+                'transaction_id': tl_card_transaction.transaction_id,
+                'amount': tl_card_transaction.amount,
                 'co2e_factor': tl_merchant.co2e_factor,
-                'total_co2e': (tl_account_transaction.amount * tl_merchant.co2e_factor),
-                'source': 'Merchant: ' + tl_merchant.merchant_name,
+                'impact': impact,
+                'source': {
+                    'type': 'Merchant',
+                    'label': tl_merchant.merchant_name,
+                }
             })
             classified_ctr += 1
 
         elif tl_merchant is None:
-            tl_classification = TrueLayerClassification.objects.filter(transaction_classification=tl_account_transaction.transaction_classification_primary).first()
+            tl_classification = TrueLayerClassification.objects.filter(
+                transaction_classification=tl_card_transaction.transaction_classification_primary).first()
             if tl_classification is not None:
-                print('amount:' + str(tl_account_transaction.amount) + ' co2e_factor:' + str(tl_classification.co2e_factor))
-                total_co2e_factor = total_co2e_factor + (tl_account_transaction.amount * tl_classification.co2e_factor)
+                impact = (tl_card_transaction.amount * tl_classification.co2e_factor)
+                total_impact = total_impact + impact
                 records.append({
-                    'transaction_id': tl_account_transaction.transaction_id,
-                    'amount': tl_account_transaction.amount,
+                    'transaction_id': tl_card_transaction.transaction_id,
+                    'amount': tl_card_transaction.amount,
                     'co2e_factor': tl_classification.co2e_factor,
-                    'total_co2e': (tl_account_transaction.amount * tl_classification.co2e_factor),
-                    'source': 'Classification: ' + tl_classification.transaction_classification,
-                })
+                    'impact': impact,
+                    'source': {
+                        'type': 'Classification',
+                        'label': tl_classification.transaction_classification
+                    }})
                 classified_ctr += 1
             elif tl_classification is None:
-                total_amount_uncategorized = total_amount_uncategorized + tl_account_transaction.amount
+                total_amount_uncategorized = total_amount_uncategorized + tl_card_transaction.amount
+                records.append({
+                    'transaction_id': tl_card_transaction.transaction_id,
+                    'amount': tl_card_transaction.amount,
+                    'co2e_factor': 'NA',
+                    'impact': 'NA',
+                })
 
-    average_impact_categorized = (total_co2e_factor / classified_ctr)
-    impact_uncategorized = average_impact_categorized * total_amount_uncategorized
-    impact_categorized = total_co2e_factor
-    total_co2e_factor = total_co2e_factor + impact_uncategorized
-    print(total_co2e_factor)
-    return {'records': records, 'impact_uncategorized': impact_uncategorized,
-            'average_impact_categorized': average_impact_categorized, 'impact_categorized': impact_categorized}
+    average_co2e_factor = total_co2e_factor / classified_ctr
+    impact_uncategorized = average_co2e_factor * total_amount_uncategorized
+    impact_categorized = total_impact
+
+    data = {'total_impact': total_impact,
+            'total_co2e_factor': total_co2e_factor,
+            'average_co2e_factor': average_co2e_factor,
+            'classified_count': classified_ctr,
+            'records': records,
+            'impact_uncategorized': impact_uncategorized,
+            'impact_categorized': impact_categorized}
+
+    print(data)
+    return data
